@@ -1,21 +1,23 @@
-<CODE_START>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>혜움 - 건국대학교 수의학과 편집부</title>
-    <!-- Tailwind CSS 로드 -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>혜윰 - 건국대학교 수의학과 편집부</title>
+    <!-- Tailwind CSS 로드 --><script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    
-    <style>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet"> <!-- 혜윰 텍스트용 폰트 --><style>
         :root {
             --background: #f7f3ef; /* 연한 베이지 */
             --surface-card: #fff;
             --border-color: #c4a882; /* 밝은 갈색 */
             --foreground: #4a3a2a; /* 짙은 갈색 텍스트 */
             --accent-primary: #9b6b43; /* 강조색 */
+            --hyeyum-yellow: #FFEB3B; /* 로고 배경 노란색 */
+            --hyeyum-pink: #FFC0CB; /* 로고 텍스트 분홍색 */
+            --hyeyum-pen: #E91E63; /* 펜 색상 */
+            --hyeyum-character: #FFFFFF; /* 캐릭터 흰색 */
+            --hyeyum-character-outline: #8B4513; /* 캐릭터 갈색 테두리 */
         }
         body {
             font-family: 'DM Sans', 'Inter', sans-serif;
@@ -32,45 +34,138 @@
             transform: translateY(-2px);
             box-shadow: 6px 6px 0px 0px rgba(122, 92, 61, 0.3);
         }
+
+        /* 혜윰 로고 CSS */
+        .hyeyum-logo-container {
+            position: relative;
+            width: 50px; /* 로고 크기 조절 */
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--hyeyum-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* 원형 밖으로 나가는 부분 숨김 */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .hyeyum-logo-text {
+            font-family: 'Gowun Dodum', sans-serif;
+            color: var(--hyeyum-pink);
+            font-size: 1.2rem; /* 텍스트 크기 조절 */
+            font-weight: 700;
+            position: absolute;
+            top: 5px; /* 위치 조절 */
+            right: 5px;
+            letter-spacing: -0.05em;
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5); /* 텍스트 테두리 효과 */
+        }
+        .hyeyum-character-body {
+            position: absolute;
+            width: 30px; /* 캐릭터 크기 조절 */
+            height: 25px;
+            background-color: var(--hyeyum-character);
+            border-radius: 50% 50% 30% 30%;
+            bottom: 5px; /* 캐릭터 위치 조절 */
+            left: 5px;
+            border: 1px solid var(--hyeyum-character-outline);
+            box-shadow: inset -1px -1px 2px rgba(0,0,0,0.1);
+        }
+        .hyeyum-character-ear {
+            position: absolute;
+            width: 10px;
+            height: 15px;
+            background-color: var(--hyeyum-character);
+            border-radius: 50%;
+            border: 1px solid var(--hyeyum-character-outline);
+            top: -5px;
+            box-shadow: inset -1px -1px 2px rgba(0,0,0,0.1);
+        }
+        .hyeyum-character-ear.left {
+            left: 0;
+            transform: rotate(-30deg);
+        }
+        .hyeyum-character-ear.right {
+            right: 0;
+            transform: rotate(30deg);
+        }
+        .hyeyum-character-eye {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: var(--hyeyum-character-outline);
+            border-radius: 50%;
+            top: 10px;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.3);
+        }
+        .hyeyum-character-eye.left {
+            left: 10px;
+        }
+        .hyeyum-character-eye.right {
+            right: 10px;
+        }
+        .hyeyum-character-pen {
+            position: absolute;
+            width: 25px; /* 펜 크기 조절 */
+            height: 5px;
+            background-color: var(--hyeyum-pen);
+            border-radius: 2px;
+            bottom: 10px; /* 펜 위치 조절 */
+            right: -5px;
+            transform: rotate(-30deg);
+            border: 1px solid rgba(0,0,0,0.3);
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+         .hyeyum-character-pen::before { /* 펜 촉 */
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-bottom: 5px solid rgba(0,0,0,0.5);
+            top: 0px;
+            right: -3px;
+            transform: rotate(90deg);
+        }
     </style>
 </head>
 <body class="p-4 sm:p-8">
 
-    <!-- 헤더 섹션 -->
-    <header class="max-w-4xl mx-auto mb-10">
+    <!-- 헤더 섹션 --><header class="max-w-4xl mx-auto mb-10">
         <div class="flex items-center justify-between border-b-2 border-amber-800/50 pb-4">
-            <!-- 로고 및 제목 -->
-            <div class="flex items-center space-x-4">
-                 <!-- 펜과 책 SVG 아이콘 -->
-                <svg class="w-10 h-10 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4m8-4l4 4-4 4m-4-4l-4 4 4 4"></path>
-                </svg>
-                <h1 class="text-3xl font-bold text-amber-800">혜움 - 건국대학교 수의학과 편집부</h1>
+            <!-- 로고 및 제목 --><div class="flex items-center space-x-4">
+                 <!-- CSS/HTML로 구현된 혜윰 로고 --><div class="hyeyum-logo-container">
+                    <span class="hyeyum-logo-text">혜윰</span>
+                    <div class="hyeyum-character-body">
+                        <div class="hyeyum-character-ear left"></div>
+                        <div class="hyeyum-character-ear right"></div>
+                        <div class="hyeyum-character-eye left"></div>
+                        <div class="hyeyum-character-eye right"></div>
+                        <div class="hyeyum-character-pen"></div>
+                    </div>
+                </div>
+
+                <h1 class="text-3xl font-bold text-amber-800">혜윰 - 건국대학교 수의학과 편집부</h1>
             </div>
-            <!-- 홈 버튼 -->
-            <a href="/" class="text-sm text-amber-800 hover:text-amber-900 transition font-medium border-2 border-amber-800 px-3 py-1 rounded-full">홈으로</a>
+            <!-- 홈 버튼 --><a href="/" class="text-sm text-amber-800 hover:text-amber-900 transition font-medium border-2 border-amber-800 px-3 py-1 rounded-full">홈으로</a>
         </div>
         
-        <!-- 배너/설명 문구 -->
-        <p id="description-banner" class="mt-8 text-center text-xl text-amber-900/80 font-medium p-4 bg-white/50 rounded-lg shadow-sm">
+        <!-- 배너/설명 문구 --><p id="description-banner" class="mt-8 text-center text-xl text-amber-900/80 font-medium p-4 bg-white/50 rounded-lg shadow-sm">
             매년 발행되는 교지와 월간지의 디지털 아카이브입니다.
         </p>
     </header>
 
-    <!-- 카탈로그 목록 섹션 -->
-    <main class="max-w-4xl mx-auto">
-        <h2 class="text-2xl font-semibold text-amber-900 mb-6 border-b pb-2">모든 카탈로그</h2>
+    <!-- 교지 목록 섹션 --><main class="max-w-4xl mx-auto">
+        <h2 class="text-2xl font-semibold text-amber-900 mb-6 border-b pb-2">모든 교지</h2>
         
-        <!-- 카탈로그 목록 표시될 컨테이너 -->
-        <div id="catalog-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <p id="loading-message" class="text-lg text-gray-500 col-span-full">브로슈어를 불러오는 중...</p>
+        <!-- 교지 목록 표시될 컨테이너 --><div id="catalog-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p id="loading-message" class="text-lg text-gray-500 col-span-full">교지를 불러오는 중...</p>
         </div>
         
         <p id="error-message" class="hidden text-center text-red-600 mt-8"></p>
     </main>
 
-    <!-- 자바스크립트 로직 -->
-    <script>
+    <!-- 자바스크립트 로직 --><script>
         // 💡 중요: Vercel에 배포된 API 서버의 주소를 여기에 입력해야 합니다.
         const API_URL = 'https://hyeyum-api.vercel.app/api/magazines'; 
 
@@ -121,8 +216,7 @@
                         <div class="text-xl font-bold text-amber-800 mb-2 truncate">${catalog.title}</div>
                         <div class="text-sm text-gray-500 mb-4">발행일: ${date}</div>
                         
-                        <!-- 미리보기 이미지 (더미 이미지 사용) -->
-                        <div class="bg-gray-100 h-40 flex items-center justify-center rounded-lg border border-gray-300 overflow-hidden">
+                        <!-- 미리보기 이미지 (더미 이미지 사용) --><div class="bg-gray-100 h-40 flex items-center justify-center rounded-lg border border-gray-300 overflow-hidden">
                             <img src="https://placehold.co/150x200/9b6b43/ffffff?text=${encodeURIComponent(catalog.title).substring(0, 10)}" 
                                  onerror="this.src='https://placehold.co/150x200/9b6b43/ffffff?text=PDF'"
                                  alt="${catalog.title} 표지" 
@@ -130,7 +224,7 @@
                         </div>
                         
                         <div class="mt-4 text-center text-sm text-amber-700 font-semibold hover:underline">
-                            클릭하여 보기 (새 창 열림)
+                            클릭하여 보기
                         </div>
                     `;
                     catalogList.appendChild(card);
@@ -149,4 +243,3 @@
     </script>
 </body>
 </html>
-<CODE_END>
