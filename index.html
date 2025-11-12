@@ -45,27 +45,27 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden; /* 원형 밖으로 나가는 부분 숨김 */
+            overflow: hidden; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .hyeyum-logo-text {
             font-family: 'Gowun Dodum', sans-serif;
             color: var(--hyeyum-pink);
-            font-size: 1.2rem; /* 텍스트 크기 조절 */
+            font-size: 1.2rem; 
             font-weight: 700;
             position: absolute;
-            top: 5px; /* 위치 조절 */
+            top: 5px; 
             right: 5px;
             letter-spacing: -0.05em;
-            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5); /* 텍스트 테두리 효과 */
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5); 
         }
         .hyeyum-character-body {
             position: absolute;
-            width: 30px; /* 캐릭터 크기 조절 */
+            width: 30px; 
             height: 25px;
             background-color: var(--hyeyum-character);
             border-radius: 50% 50% 30% 30%;
-            bottom: 5px; /* 캐릭터 위치 조절 */
+            bottom: 5px; 
             left: 5px;
             border: 1px solid var(--hyeyum-character-outline);
             box-shadow: inset -1px -1px 2px rgba(0,0,0,0.1);
@@ -105,17 +105,17 @@
         }
         .hyeyum-character-pen {
             position: absolute;
-            width: 25px; /* 펜 크기 조절 */
+            width: 25px; 
             height: 5px;
             background-color: var(--hyeyum-pen);
             border-radius: 2px;
-            bottom: 10px; /* 펜 위치 조절 */
+            bottom: 10px; 
             right: -5px;
             transform: rotate(-30deg);
             border: 1px solid rgba(0,0,0,0.3);
             box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
-         .hyeyum-character-pen::before { /* 펜 촉 */
+         .hyeyum-character-pen::before { 
             content: '';
             position: absolute;
             width: 0;
@@ -132,7 +132,7 @@
 <body class="p-4 sm:p-8">
 
     <!-- 헤더 섹션 --><header class="max-w-4xl mx-auto mb-10">
-        <div class="flex items-center justify-between border-b-2 border-amber-800/50 pb-4">
+        <div class="flex items-center justify-start border-b-2 border-amber-800/50 pb-4">
             <!-- 로고 및 제목 --><div class="flex items-center space-x-4">
                  <!-- CSS/HTML로 구현된 혜윰 로고 --><div class="hyeyum-logo-container">
                     <span class="hyeyum-logo-text">혜윰</span>
@@ -147,7 +147,7 @@
 
                 <h1 class="text-3xl font-bold text-amber-800">혜윰 - 건국대학교 수의학과 편집부</h1>
             </div>
-            <!-- 홈 버튼 --><a href="/" class="text-sm text-amber-800 hover:text-amber-900 transition font-medium border-2 border-amber-800 px-3 py-1 rounded-full">홈으로</a>
+            <!-- 홈 버튼 (삭제됨, 공간 정리됨) -->
         </div>
         
         <!-- 배너/설명 문구 --><p id="description-banner" class="mt-8 text-center text-xl text-amber-900/80 font-medium p-4 bg-white/50 rounded-lg shadow-sm">
