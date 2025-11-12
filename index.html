@@ -1,0 +1,254 @@
+<시작>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>혜움 - 건국대학교 수의학과 편집부</title>
+    <!-- Tailwind CSS 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- PDF.js 라이브러리 로드 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <style>
+        :root {
+            --background: #f7f3ef; /* 연한 베이지 */
+            --surface-card: #fff;
+            --border-color: #c4a882; /* 밝은 갈색 */
+            --foreground: #4a3a2a; /* 짙은 갈색 텍스트 */
+            --accent-primary: #9b6b43; /* 강조색 */
+        }
+        body {
+            font-family: 'DM Sans', 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            min-height: 100vh;
+        }
+        .catalog-item {
+            /* 목록 아이템 스타일 */
+            border: 1px solid transparent;
+        }
+        .catalog-item:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .catalog-item.border-amber-500 {
+            /* 선택된 항목 강조 */
+            border-color: #f59e0b; /* Tailwind amber-500 */
+        }
+        /* PDF 뷰어 영역 스타일 */
+        #pdf-viewer-container {
+            width: 100%;
+            height: 80vh; 
+            overflow-y: scroll;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #e9e5e1;
+            /* PDF 페이지가 중앙에 오도록 설정 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <!-- 헤더 섹션 -->
+    <header class="max-w-6xl mx-auto mb-10">
+        <div class="flex items-center justify-between border-b-2 border-amber-800/50 pb-4">
+            <!-- 로고 및 제목 -->
+            <div class="flex items-center space-x-4">
+                <!-- 펜과 책 SVG 아이콘 -->
+                <svg class="w-10 h-10 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4m8-4l4 4-4 4m-4-4l-4 4 4 4"></path>
+                </svg>
+                <h1 class="text-3xl font-bold text-amber-800">혜움 - 건국대학교 수의학과 편집부</h1>
+            </div>
+            <!-- 홈 버튼 -->
+            <a href="/" class="text-sm text-amber-800 hover:text-amber-900 transition font-medium border-2 border-amber-800 px-3 py-1 rounded-full">홈으로</a>
+        </div>
+        <p id="description-banner" class="mt-8 text-center text-xl text-amber-900/80 font-medium p-4 bg-white/50 rounded-lg shadow-sm">
+            매년 발행되는 교지와 월간지의 디지털 아카이브입니다.
+        </p>
+    </header>
+
+    <!-- 메인 콘텐츠 섹션: 목록(왼쪽)과 뷰어(오른쪽) -->
+    <main class="max-w-6xl mx-auto py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+            <!-- 왼쪽: 카탈로그 목록 및 목차 -->
+            <div class="lg:col-span-1">
+                <h2 class="text-2xl font-semibold text-amber-900 mb-6 border-b pb-2">카탈로그 목차</h2>
+                
+                <div id="catalog-list" class="space-y-4">
+                    <p id="loading-message" class="text-lg text-gray-500">브로슈어를 불러오는 중...</p>
+                    <p id="error-message" class="hidden text-red-600 mt-4"></p>
+                </div>
+            </div>
+
+            <!-- 오른쪽: PDF 뷰어 -->
+            <div class="lg:col-span-3">
+                <h2 id="viewer-title" class="text-2xl font-semibold text-amber-900 mb-6 border-b pb-2">선택된 교지: 없음</h2>
+                <div id="pdf-viewer-container" class="shadow-xl">
+                    <div id="pdf-canvas-container" class="w-full flex flex-col items-center p-4">
+                        <p id="viewer-placeholder" class="text-lg text-gray-500 mt-20">왼쪽 목록에서 교지를 선택해 주세요.</p>
+                        <!-- PDF 페이지 렌더링 영역 -->
+                    </div>
+                    <div id="pdf-loading-bar" class="w-full bg-gray-200 h-2 hidden">
+                        <div id="pdf-progress" class="bg-amber-600 h-2 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 자바스크립트 로직 -->
+    <script>
+        // PDF.js worker 경로 설정 (필수)
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        // API 설정
+        const API_URL = 'https://hyeyum-api.vercel.app/api/magazines'; 
+
+        const catalogList = document.getElementById('catalog-list');
+        const loadingMessage = document.getElementById('loading-message');
+        const errorMessage = document.getElementById('error-message');
+        const viewerContainer = document.getElementById('pdf-canvas-container');
+        const viewerTitle = document.getElementById('viewer-title');
+        const viewerPlaceholder = document.getElementById('viewer-placeholder');
+        const progressBar = document.getElementById('pdf-progress');
+        const loadingBar = document.getElementById('pdf-loading-bar');
+        
+        let currentPdf = null;
+        let scale = 1.2; // PDF 렌더링 크기
+
+        /**
+         * 구글 드라이브 파일 ID를 사용하여 PDF 다운로드 URL을 생성합니다.
+         */
+        function getDownloadUrl(fileId) {
+            // 이 주소는 Vercel API 서버에서 사용했던 다운로드 링크 형식입니다.
+            // 구글 드라이브 파일은 다운로드 주소를 사용해야 PDF.js에서 로드할 수 있습니다.
+            return `https://drive.google.com/uc?export=download&id=${fileId}`;
+        }
+
+
+        /**
+         * PDF 파일을 로드하고 캔버스에 렌더링합니다.
+         */
+        async function renderPdf(fileId, title) {
+            viewerPlaceholder.classList.add('hidden');
+            viewerTitle.textContent = `선택된 교지: ${title}`;
+            viewerContainer.innerHTML = ''; // 기존 페이지 삭제
+            // 스크롤을 맨 위로 이동
+            document.getElementById('pdf-viewer-container').scrollTop = 0;
+            loadingBar.classList.remove('hidden');
+
+            try {
+                const url = getDownloadUrl(fileId);
+                const pdf = await pdfjsLib.getDocument({ url: url }).promise;
+                currentPdf = pdf;
+
+                loadingBar.classList.add('hidden');
+
+                // 모든 페이지를 순차적으로 렌더링
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    const page = await pdf.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: scale });
+
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    canvas.className = 'my-4 shadow-lg border border-gray-400'; // 페이지별 스타일 추가
+
+                    // 캔버스를 뷰어에 추가
+                    viewerContainer.appendChild(canvas);
+
+                    // 캔버스에 페이지 렌더링
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    await page.render(renderContext).promise;
+                }
+
+            } catch (error) {
+                console.error('PDF 렌더링 중 오류 발생:', error);
+                viewerContainer.innerHTML = '<p class="text-xl text-red-600 mt-20 p-4 bg-red-50 rounded-lg">PDF를 로드할 수 없습니다. 구글 드라이브 파일의 공유 권한을 확인해주세요.</p>';
+            } finally {
+                loadingBar.classList.add('hidden');
+                progressBar.style.width = '0%';
+            }
+        }
+
+        /**
+         * API 서버에서 교지 목록을 가져와 HTML로 렌더링하고 클릭 이벤트를 설정합니다.
+         */
+        async function fetchCatalogs() {
+            loadingMessage.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP 오류! 상태 코드: ${response.status}`);
+                }
+                const catalogs = await response.json();
+
+                loadingMessage.classList.add('hidden');
+                
+                if (catalogs.length === 0) {
+                    catalogList.innerHTML = '<p class="text-sm text-gray-500">게시된 교지가 없습니다.</p>';
+                    return;
+                }
+
+                catalogList.innerHTML = ''; 
+                
+                catalogs.forEach((catalog, index) => {
+                    const date = new Date(catalog.date).toLocaleDateString('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit'
+                    }).replace(/\. /g, '-').replace('.', '');
+                    
+                    const item = document.createElement('div');
+                    item.className = 'p-3 bg-white rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:bg-amber-50 transition catalog-item';
+                    item.innerHTML = `
+                        <div class="text-lg font-bold text-amber-800">${(index + 1).toString().padStart(2, '0')}. ${catalog.title}</div>
+                        <div class="text-xs text-gray-500 mt-1">${date}</div>
+                    `;
+                    
+                    // 목록 클릭 시 뷰어에 PDF 띄우기
+                    item.addEventListener('click', () => {
+                        // 모든 항목에서 '선택됨' 스타일 제거
+                        document.querySelectorAll('.catalog-item').forEach(el => el.classList.remove('border-4', 'border-amber-500', 'z-10'));
+                        
+                        // 현재 항목에 '선택됨' 스타일 추가
+                        item.classList.add('border-4', 'border-amber-500', 'z-10'); // z-10은 그림자 효과를 위해 추가
+                        
+                        // PDF 렌더링 시작
+                        renderPdf(catalog.id, catalog.title);
+                    });
+
+                    catalogList.appendChild(item);
+
+                    // 첫 번째 항목을 자동으로 로드 
+                    if (index === 0) {
+                        item.classList.add('border-4', 'border-amber-500', 'z-10');
+                        renderPdf(catalog.id, catalog.title);
+                    }
+                });
+
+            } catch (error) {
+                console.error("카탈로그 데이터를 가져오는 중 오류 발생:", error);
+                loadingMessage.classList.add('hidden');
+                errorMessage.classList.remove('hidden');
+                errorMessage.textContent = '데이터를 불러오는 데 실패했습니다. (API 서버와의 연결 실패)';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchCatalogs);
+    </script>
+</body>
+</html>
+<끝>
